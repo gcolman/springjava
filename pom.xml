@@ -64,6 +64,17 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-http</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.fabric8.mq</groupId>
+      <artifactId>camel-amq</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-camel</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+
 
     <dependency>
       <groupId>org.slf4j</groupId>
