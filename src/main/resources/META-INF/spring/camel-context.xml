@@ -6,17 +6,30 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+  <bean id="activemq" class="io.fabric8.mq.camel.AMQComponent" >
+    <property name="connectionFactory" ref="connectionFactory"/>
+    <property name="serviceName" value="broker"/>
+  </bean>
+
+  <bean id="connectionFactory" class="io.fabric8.mq.core.MQConnectionFactory">
+    <property name="userName" value="demo"/>
+    <property name="password" value="demo"/>
+  </bean>
+
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-	<endpoint uri="http://www.google.com" id="callQuoteWebService"/>
-    <route id="cbr-route">
-    
-    	<from uri="timer:foo?period=60000"/>
-<!-- 		<setBody> -->
-<!-- 			<simple>%3C%3Fxml+version%3D%221.0%22+encoding%3D%22utf-8%22%3F%3E%3Csoap%3AEnvelope+xmlns%3Axsi%3D%22http%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema-instance%22+xmlns%3Axsd%3D%22http%3A%2F%2Fwww.w3.org%2F2001%2FXMLSchema%22+xmlns%3Asoap%3D%22http%3A%2F%2Fschemas.xmlsoap.org%2Fsoap%2Fenvelope%2F%22%3E%3Csoap%3ABody%3E%3CGetQuote+xmlns%3D%22http%3A%2F%2Fwww.webserviceX.NET%2F%22%3E%3Csymbol%3EORCL%3C%2Fsymbol%3E%3C%2FGetQuote%3E%3C%2Fsoap%3ABody%3E%3C%2Fsoap%3AEnvelope%3E</simple> -->
-<!-- 		</setBody> -->
-		 <to ref="callQuoteWebService"/>
-		 <log message="${body}"/>
+
+    <route id="mq-out">
+    	<from uri="timer:foo?period=3000"/>
+	<setBody><simple>Hello from Derry Hill</simple></setBody>
+	<to uri="activemq:messages"/>
+	<log message="pushed a message onto the queue"/>
     </route>
+
+    <route id="mq-in">
+    	<from uri="activemq:messages"/>
+	<log message="received from messages queue ${body}"/>
+    </route>
+
 
   </camelContext>
 
